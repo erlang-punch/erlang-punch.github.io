@@ -84,10 +84,13 @@
         <li>/api/publications.json</li>
       </ul>
     </noscript>
-    <div id="application" class="container"></div>
-    <footer>
+    <div id="application" class="container" style="max-width: 1280px;"></div>
+    <footer class="container" style="max-width: 1280px;">
       <hr>
-      <p class="text-center text-tiny">Made by <a href="https://erlangpunch.com">ErlangPunch</a>.</p>
+      <p class="text-center text-tiny">
+        Copyright &copy; 2024 | 
+        Made with &#x2661; by the <a href="https://erlangpunch.com">ErlangPunch</a> project.
+      </p>
     </footer>
     <script src="https://unpkg.com/mithril@2.2.2/mithril.js"></script>
     <!-- <script src="https://unpkg.com/mithril/stream/stream.js"></script> -->
@@ -137,8 +140,8 @@
 
       // Returns CSS class for active header
       function header_link(name, target) {
-          var active_link = "p-1 bg-secondary text-primary";
-          var passive_link = "p-1";
+          var active_link = "p-1 bg-secondary text-primary text-large";
+          var passive_link = "p-1 text-large";
           var css_class = name === target ? active_link : passive_link ;
           return m(m.route.Link, {class: css_class, href: "/" + name}, name);
       }
@@ -149,7 +152,7 @@
               var description = vnode.children[1];
               return [
                   m("header", {class: "bg-gray columns"}, [
-                      m("div", {class: "m-2 p-2 column col-auto col-2", style: "width: 3rem; height: 3rem;"}, [
+                      m("div", {class: "m-2 p-2 column col-auto col-2 text-large", style: "width: 3rem; height: 3rem;"}, [
                           m("img", {class: "img-responsive img-fit-contain p-centered", src: "https://erlangpunch.com/assets/images/erlang-punch.png"}, [])
                       ]),
                       m("div", {class: "column col p-0"}, [
@@ -161,7 +164,7 @@
                               header_link("authors", name),
                               header_link("about", name),
                           ]),
-                          m("div", {class: "p-1 bg-secondary text-primary"}, description)
+                          m("div", {class: "p-1 bg-secondary text-primary text-small"}, description)
                       ])
                   ])
               ];
@@ -172,7 +175,7 @@
           return m("div", {class: "py-2 tile"}, [
               m("div", {class: "tile-content"}, [
                   m("div", {class: "d-inline-flex title-title"}, [
-                      m("div", {class: ""}, [
+                      m("div", {class: "text-large"}, [
                           m("a", {class: "text-bold", href: item.repository}, item.name),
                           m("span", {class: "chip text-tiny bg-primary mx-2"}, [
                               item.stars,
@@ -181,14 +184,14 @@
                       ])
                   ]),
                   m("div", {class: "px-2"}, [
-                      m("div", {class: "tile-subtitle"}, item.description),
-                      m("div", {class: ""}, [
-                          Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny bg-secondary"}, item.watchers + " watchers") : "",
-                          Number.isInteger(item.size) ? m("span", {class: "chip text-tiny bg-secondary"}, item.size + " kB") : "",
-                          Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny bg-secondary"}, item.open_issues + " open issues") : "",
-                          m("span", {class: "chip text-tiny bg-secondary"}, item.forks + " forks"),
+                      m("div", {class: "tile-subtitle text-normal"}, [item.description]),
+                      m("div", {class: "text-tiny"}, [
+                          Number.isInteger(item.watchers) ? m("span", {class: "chip bg-secondary"}, item.watchers + " watchers") : "",
+                          Number.isInteger(item.size) ? m("span", {class: "chip bg-secondary"}, item.size + " kB") : "",
+                          Number.isInteger(item.open_issues) ? m("span", {class: "chip bg-secondary"}, item.open_issues + " open issues") : "",
+                          m("span", {class: "chip bg-secondary"}, item.forks + " forks"),
                           m("span", item.labels.map(label => {
-                              return m("span", {class:"chip text-tiny"}, label);
+                              return m("span", {class:"chip"}, label);
                           }))
                       ])
                   ])
@@ -200,7 +203,7 @@
           return m("div", {class: "py-2 tile"}, [
               m("div", {class: "tile-content"}, [
                   m("div", {class: "d-inline-flex title-title"}, [
-                      m("div", {class: ""}, [
+                      m("div", {class: "text-large"}, [
                           m("a", {class: "text-bold", href: item.url}, item.title),
                           " (", item.date, ")"
                       ])
@@ -242,7 +245,7 @@
                   m(Header, "publications", [
                       "A list of",
                       " (", Api.publications.list.length, ") ",
-                      "Awesome Erlang Open-source Academic Publications.",
+                      "Awesome Erlang Academic Publications.",
                   ]),
                   m("main", [
                       Api.publications.list
@@ -275,8 +278,17 @@
           view: function(vnode) {
               return [
                   m(Header, "about", "About Awesome Erlang List project..."),
-                  m("main", [
-                  ]),
+                  m("main", {class: "text-justify"}, [
+                      m("p", [
+                          "It started as a simple list update, and it's becoming a full mapping of Erlang projects. ",
+                          "One of the goal is to offer an accurate view of everything related to Erlang, from projects ",
+                          "books, documentations to academic publications and trainings."
+                      ]),
+                      m("p", [
+                          "This static website is currently a way to experiment how to sort all information. ",
+                          "Please be aware it will change often."
+                      ])
+                  ])
               ];
           }
       }
