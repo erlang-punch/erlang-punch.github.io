@@ -81,7 +81,11 @@ var Projects = {
     oninit: Api.projects.fetch,
     view: function(vnode) {
         return [
-            m(Header, "projects", "A list of Awesome Erlang Open-source Projects"),
+            m(Header, "projects", [
+                "A list of",
+                " (", Api.projects.list.length, ") ",
+                "Awesome Erlang Open-source Projects",
+            ]),
             m("main", [
                 Api.projects.list.map(function(item) {
                     return m("div", {class: "py-2"}, [
@@ -91,9 +95,9 @@ var Projects = {
                         ]),
                         m("div", [
                             m("span", {class: "chip text-tiny"}, item.stars + " stars"),
-                            m("span", {class: "chip text-tiny"}, item.watchers + " watchers"),
-                            m("span", {class: "chip text-tiny"}, item.size + " kB"),
-                            m("span", {class: "chip text-tiny"}, item.open_issues + " open issues"),
+                            Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny"}, item.watchers + " watchers") : "",
+                            Number.isInteger(item.size) ? m("span", {class: "chip text-tiny"}, item.size + " kB") : "",
+                            Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny"}, item.open_issues + " open issues") : "",
                             m("span", {class: "chip text-tiny"}, item.forks + " forks"),
                             m("span", item.labels.map(label => {
                                 return m("span", {class:"chip text-tiny"}, label);
