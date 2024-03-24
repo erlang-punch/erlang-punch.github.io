@@ -1,6 +1,3 @@
-//
-//
-//
 var Api = {
     projects: {
         list: [],
@@ -40,8 +37,12 @@ var Api = {
     }    
 }
 
-function active_link(a,b) {
-    return a === b ? "m-1 p-1 bg-secondary text-primary" : "m-1 p-1";
+// Returns CSS class for active header
+function header_link(name, target) {
+    var active_link = "p-1 bg-secondary text-primary";
+    var passive_link = "p-1";
+    var css_class = name === target ? active_link : passive_link ;
+    return m(m.route.Link, {class: css_class, href: "/" + name}, name);
 }
 
 var Header = {
@@ -49,31 +50,23 @@ var Header = {
         var name = vnode.children[0];
         var description = vnode.children[1];
         return [
-            m("header", {class: "bg-gray"}, [
-                m("div", {class: ""}, [
-                    m(m.route.Link, {class: "", href: "/projects"}, "Awesome Erlang List"),
-                    m(m.route.Link, {class: active_link("projects", name), href: "/projects"}, "projects"),
-                    m(m.route.Link, {class: active_link("books", name), href: "/books"}, "books"),
-                    m(m.route.Link, {class: active_link("publications", name), href: "/publications"}, "publications"),
-                    m(m.route.Link, {class: active_link("authors", name), href: "/authors"}, "authors"),
-                    m(m.route.Link, {class: active_link("about", name), href: "/about"}, "about")
+            m("header", {class: "bg-gray columns"}, [
+                m("div", {class: "m-2 p-2 column col-auto col-2", style: "width: 3rem; height: 3rem;"}, [
+                    m("img", {class: "img-responsive img-fit-contain p-centered", src: "https://erlangpunch.com/assets/images/erlang-punch.png"}, [])
                 ]),
-                m("p", {class: "px-2 bg-secondary text-primary"}, description)
+                m("div", {class: "column col p-0"}, [
+                    m(m.route.Link, {class: "p-1 text-bold", href: "/home"}, "Awesome Erlang List"),
+                    m("div", {class: ""}, [
+                        header_link("projects", name),
+                        header_link("books", name),
+                        header_link("publications", name),
+                        header_link("authors", name),
+                        header_link("about", name),
+                    ]),
+                    m("div", {class: "p-1 bg-secondary text-primary"}, description)
+                ])
             ])
         ];
-    }
-}
-
-var Footer = {
-    view: function(vnode) {
-        return m("footer", {class: "bg-gray"}, [
-            m("hr"),
-            m("p", {class: "text-center text-tiny"}, [
-                "Made by ",
-                m("a", {href: "https://erlangpunch.com"}, "Erlang Punch"),
-                " with <3"
-            ])
-        ]);
     }
 }
 
@@ -93,9 +86,9 @@ var Projects = {
                             m("div", {class: "d-inline-flex title-title"}, [
                                 m("div", {class: ""}, [
                                     m("a", {class: "text-bold", href: item.repository}, item.name),
-                                    m("span", {class: "chip text-tiny bg-warning"}, [
+                                    m("span", {class: "chip text-tiny bg-primary mx-2"}, [
                                         item.stars,
-                                        " stars"
+                                        " \u{2B50}"
                                     ])
                                 ])
                             ]),
@@ -114,8 +107,7 @@ var Projects = {
                         ])
                     ])
                 })
-            ]),
-            m(Footer)
+            ])
         ]}
 }
 
@@ -125,8 +117,7 @@ var Books = {
         return [
             m(Header, "books", "A list of Awesome Erlang Books"),
             m("main", [
-            ]),
-            m(Footer)
+            ])
         ];
     }
 }
@@ -137,8 +128,7 @@ var Publications = {
         return [
             m(Header, "publications", "A list of Awesome Erlang Academic Publications"),
             m("main", [
-            ]),
-            m(Footer)
+            ])
         ];
     }
 }
@@ -148,8 +138,7 @@ var Resources = {
         return [
             m(Header, "resources", "A list of Awesome Erlang Resources"),
             m("main", [
-            ]),
-            m(Footer)
+            ])
         ];
     }
 }
@@ -159,8 +148,7 @@ var Authors = {
         return [
             m(Header, "authors", "A list of Awesome Erlang Authors"),
             m("main", [
-            ]),
-            m(Footer)
+            ])
         ];
     }
 }
@@ -171,10 +159,30 @@ var About = {
             m(Header, "about", "About Awesome Erlang List project..."),
             m("main", [
             ]),
-            m(Footer)
         ];
     }
 }
+
+var Home = {
+    view: function(vnode) {
+        return [
+            m(Header, "home", ""),
+            m("main", [
+                m("svg", {"class":"feather feather-star","xmlns":"http://www.w3.org/2000/svg","width":"24","height":"24","viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","stroke-width":"2","stroke-linecap":"round","stroke-linejoin":"round"},
+                  m("polygon", {"points":"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"})
+                 )
+            ])
+        ];
+    }
+}
+
+
+
+
+var Application = {
+    
+}
+
 
 var root = document.getElementById("application");
 m.route(root, "/", {

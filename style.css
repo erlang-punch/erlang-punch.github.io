@@ -19,6 +19,10 @@ a:active {
     background-color: #737373;
 }
 
+.m-0 {
+    margin: 0;
+}
+
 .mx-1 {
     margin-left: 0.25rem;
     margin-right: 0.25rem;
@@ -27,6 +31,10 @@ a:active {
 .mx-2 {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
+}
+
+.p-0 {
+    padding: 0;
 }
 
 .p-1 {
@@ -48,6 +56,11 @@ a:active {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
+
+.pr-2 {
+    padding-right: 0.5rem;
+}
+
 
 .inline {
     display: inline;
