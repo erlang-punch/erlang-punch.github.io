@@ -88,20 +88,29 @@ var Projects = {
             ]),
             m("main", [
                 Api.projects.list.map(function(item) {
-                    return m("div", {class: "py-2"}, [
-                        m("div", {class: "d-inline-flex"}, [
-                            m("div", {class: ""}, [m("a", {href: item.repository}, item.name), ":"]),
-                            m("div", {class: "px-1"}, item.description)
-                        ]),
-                        m("div", [
-                            m("span", {class: "chip text-tiny"}, item.stars + " stars"),
-                            Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny"}, item.watchers + " watchers") : "",
-                            Number.isInteger(item.size) ? m("span", {class: "chip text-tiny"}, item.size + " kB") : "",
-                            Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny"}, item.open_issues + " open issues") : "",
-                            m("span", {class: "chip text-tiny"}, item.forks + " forks"),
-                            m("span", item.labels.map(label => {
-                                return m("span", {class:"chip text-tiny"}, label);
-                            }))
+                    return m("div", {class: "py-2 tile"}, [
+                        m("div", {class: "tile-content"}, [
+                            m("div", {class: "d-inline-flex title-title"}, [
+                                m("div", {class: ""}, [
+                                    m("a", {class: "text-bold", href: item.repository}, item.name),
+                                    m("span", {class: "chip text-tiny bg-warning"}, [
+                                        item.stars,
+                                        " stars"
+                                    ])
+                                ])
+                            ]),
+                            m("div", {class: "px-2"}, [
+                                m("div", {class: "tile-subtitle"}, item.description),
+                                m("div", {class: ""}, [
+                                    Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny bg-secondary"}, item.watchers + " watchers") : "",
+                                    Number.isInteger(item.size) ? m("span", {class: "chip text-tiny bg-secondary"}, item.size + " kB") : "",
+                                    Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny bg-secondary"}, item.open_issues + " open issues") : "",
+                                    m("span", {class: "chip text-tiny bg-secondary"}, item.forks + " forks"),
+                                    m("span", item.labels.map(label => {
+                                        return m("span", {class:"chip text-tiny"}, label);
+                                    }))
+                                ])
+                            ])
                         ])
                     ])
                 })
