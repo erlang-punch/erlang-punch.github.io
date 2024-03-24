@@ -95,14 +95,16 @@
       var Api = {
           projects: {
               list: [],
-              fetch: function() {
+              fetch: async function() {
                   m.request({
                       method: "GET",
                       url: "/api/projects.json"
                   })
-                      .then(function(data) {
-                          Api.projects.list = data
+                  .then(async (data) => {
+                      Api.projects.list = data.map((item) => {
+                          return project_tile(item);
                       })
+                  })
               }
           },
           books: {
@@ -119,14 +121,16 @@
           },
           publications: {
               list: [],
-              fetch: function() {
+              fetch: async function() {
                   m.request({
                       method: "GET",
                       url: "/api/publications.json"
                   })
-                      .then(function(data) {
-                          Api.projects.list = data
+                  .then(async function(data) {
+                      Api.publications.list = data.map((item) => {
+                          return publication_tile(item);
                       })
+                  })
               }
           }
       }
@@ -164,6 +168,47 @@
           }
       }
 
+      function project_tile(item) {
+          return m("div", {class: "py-2 tile"}, [
+              m("div", {class: "tile-content"}, [
+                  m("div", {class: "d-inline-flex title-title"}, [
+                      m("div", {class: ""}, [
+                          m("a", {class: "text-bold", href: item.repository}, item.name),
+                          m("span", {class: "chip text-tiny bg-primary mx-2"}, [
+                              item.stars,
+                              " \u{2B50}"
+                          ])
+                      ])
+                  ]),
+                  m("div", {class: "px-2"}, [
+                      m("div", {class: "tile-subtitle"}, item.description),
+                      m("div", {class: ""}, [
+                          Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny bg-secondary"}, item.watchers + " watchers") : "",
+                          Number.isInteger(item.size) ? m("span", {class: "chip text-tiny bg-secondary"}, item.size + " kB") : "",
+                          Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny bg-secondary"}, item.open_issues + " open issues") : "",
+                          m("span", {class: "chip text-tiny bg-secondary"}, item.forks + " forks"),
+                          m("span", item.labels.map(label => {
+                              return m("span", {class:"chip text-tiny"}, label);
+                          }))
+                      ])
+                  ])
+              ])
+          ])
+      }
+
+      function publication_tile(item) {
+          return m("div", {class: "py-2 tile"}, [
+              m("div", {class: "tile-content"}, [
+                  m("div", {class: "d-inline-flex title-title"}, [
+                      m("div", {class: ""}, [
+                          m("a", {class: "text-bold", href: item.url}, item.title),
+                          " (", item.date, ")"
+                      ])
+                  ])
+              ])
+          ])
+      }
+      
       var Projects = {
           oninit: Api.projects.fetch,
           view: function(vnode) {
@@ -171,36 +216,10 @@
                   m(Header, "projects", [
                       "A list of",
                       " (", Api.projects.list.length, ") ",
-                      "Awesome Erlang Open-source Projects",
+                      "Awesome Erlang Open-source Projects.",
                   ]),
                   m("main", [
-                      Api.projects.list.map(function(item) {
-                          return m("div", {class: "py-2 tile"}, [
-                              m("div", {class: "tile-content"}, [
-                                  m("div", {class: "d-inline-flex title-title"}, [
-                                      m("div", {class: ""}, [
-                                          m("a", {class: "text-bold", href: item.repository}, item.name),
-                                          m("span", {class: "chip text-tiny bg-primary mx-2"}, [
-                                              item.stars,
-                                              " \u{2B50}"
-                                          ])
-                                      ])
-                                  ]),
-                                  m("div", {class: "px-2"}, [
-                                      m("div", {class: "tile-subtitle"}, item.description),
-                                      m("div", {class: ""}, [
-                                          Number.isInteger(item.watchers) ? m("span", {class: "chip text-tiny bg-secondary"}, item.watchers + " watchers") : "",
-                                          Number.isInteger(item.size) ? m("span", {class: "chip text-tiny bg-secondary"}, item.size + " kB") : "",
-                                          Number.isInteger(item.open_issues) ? m("span", {class: "chip text-tiny bg-secondary"}, item.open_issues + " open issues") : "",
-                                          m("span", {class: "chip text-tiny bg-secondary"}, item.forks + " forks"),
-                                          m("span", item.labels.map(label => {
-                                              return m("span", {class:"chip text-tiny"}, label);
-                                          }))
-                                      ])
-                                  ])
-                              ])
-                          ])
-                      })
+                      Api.projects.list
                   ])
               ]}
       }
@@ -209,7 +228,7 @@
           oninit: Api.books.fetch,
           view: function(vnode) {
               return [
-                  m(Header, "books", "A list of Awesome Erlang Books"),
+                  m(Header, "books", "A list of Awesome Erlang Books."),
                   m("main", [
                   ])
               ];
@@ -220,8 +239,13 @@
           oninit: Api.publications.fetch,
           view: function(vnode) {
               return [
-                  m(Header, "publications", "A list of Awesome Erlang Academic Publications"),
+                  m(Header, "projects", [
+                      "A list of",
+                      " (", Api.publications.list.length, ") ",
+                      "Awesome Erlang Open-source Academic Publications.",
+                  ]),
                   m("main", [
+                      Api.publications.list
                   ])
               ];
           }
@@ -230,7 +254,7 @@
       var Resources = {
           view: function(vnode) {
               return [
-                  m(Header, "resources", "A list of Awesome Erlang Resources"),
+                  m(Header, "resources", "A list of Awesome Erlang Resources."),
                   m("main", [
                   ])
               ];
@@ -240,7 +264,7 @@
       var Authors = {
           view: function(vnode) {
               return [
-                  m(Header, "authors", "A list of Awesome Erlang Authors"),
+                  m(Header, "authors", "A list of Awesome Erlang Authors."),
                   m("main", [
                   ])
               ];
