@@ -25,6 +25,10 @@
           text-decoration: none;
       }
 
+      a:visited {
+          text-decoration: none;
+      }
+
       .fg-white:visited {
           text-color: white;
       }
@@ -105,13 +109,21 @@
       var Api = {
           projects: {
               list: [],
+              github: { counter: 0},
+              gitlab: {counter: 0},
               fetch: async function() {
                   m.request({
                       method: "GET",
                       url: "/api/projects.json"
                   })
                   .then(async (data) => {
-                      Api.projects.list = data.map((item) => {
+                      Api.projects.list = await data.map((item) => {
+                          if (item.provider === "github") {
+                              Api.projects.github.counter += 1;
+                          }
+                          if (item.provider === "gitlab") {
+                              Api.projects.gitlab.counter += 1;
+                          }
                           return project_tile(item);
                       })
                   })
@@ -178,27 +190,44 @@
           }
       }
 
-      function project_tile(item) {
+      function project_tile_github(item) {
           return m("div", {class: "py-2 tile"}, [
               m("div", {class: "tile-content"}, [
                   m("div", {class: "d-inline-flex title-title"}, [
                       m("div", {class: "text-large"}, [
                           m("a", {class: "text-bold", href: item.repository}, item.name),
-                          m("span", {class: "chip text-tiny bg-primary mx-2"}, [
-                              item.stars,
-                              " \u{2B50}"
+                          m("a", {href: item.repository + "/stargazers"}, [
+                              m("span", {class: "chip text-tiny bg-primary mx-2"}, [
+                                  item.stars, " \u{2B50}"
+                              ])
                           ])
                       ])
                   ]),
                   m("div", {class: "px-2"}, [
                       m("div", {class: "tile-subtitle text-normal"}, [item.description]),
                       m("div", {class: "text-tiny"}, [
-                          Number.isInteger(item.watchers) ? m("span", {class: "chip bg-secondary"}, item.watchers + " watchers") : "",
-                          Number.isInteger(item.size) ? m("span", {class: "chip bg-secondary"}, item.size + " kB") : "",
-                          Number.isInteger(item.open_issues) ? m("span", {class: "chip bg-secondary"}, item.open_issues + " open issues") : "",
-                          m("span", {class: "chip bg-secondary"}, item.forks + " forks"),
+                          m("a", {href: item.repository + "/watchers"}, [
+                              m("span", {class: "chip bg-secondary"}, [
+                                  item.watchers + " watchers"
+                              ])
+                          ]),
+                          m("span", {class: "chip bg-secondary"}, item.size + " kB"),
+                          m("a", {href: item.repository + "/issues"}, [
+                              m("span", {class: "chip bg-secondary"}, [
+                                  item.open_issues + " open issues"
+                              ])
+                          ]),
+                          m("a", {href: item.repository + "/forks"}, [
+                              m("span", {class: "chip bg-secondary"}, [
+                                  item.forks + " forks"
+                              ])
+                          ]),
                           m("span", item.labels.map(label => {
-                              return m("span", {class:"chip"}, label);
+                              return m("a", {href: item.repository + "/topics/cozo"}, [
+                                  m("span", {class:"chip"}, [
+                                      label
+                                  ])
+                              ]);
                           }))
                       ])
                   ])
@@ -206,6 +235,52 @@
           ])
       }
 
+      function project_tile_gitlab(item) {
+          return m("div", {class: "py-2 tile"}, [
+              m("div", {class: "tile-content"}, [
+                  m("div", {class: "d-inline-flex title-title"}, [
+                      m("div", {class: "text-large"}, [
+                          m("a", {class: "text-bold", href: item.repository}, item.name),
+                          m("a", {href: item.repository + "/-/starrers"}, [
+                              m("span", {class: "chip text-tiny bg-primary mx-2"}, [
+                                  item.stars, " \u{2B50}"
+                              ])
+                          ])
+                      ])
+                  ]),
+                  m("div", {class: "px-2"}, [
+                      m("div", {class: "tile-subtitle text-normal"}, [item.description]),
+                      m("div", {class: "text-tiny"}, [
+                          m("a", {href: item.repository + "/-/issues"}, [
+                              m("span", {class: "chip bg-secondary"}, [
+                                  item.open_issues + " open issues"
+                              ])
+                          ]),
+                          m("a", {href: item.repository + "/-/forks"}, [
+                              m("span", {class: "chip bg-secondary"},[
+                                  item.forks + " forks"
+                              ])
+                            ]),
+                          m("span", item.labels.map(label => {
+                              return m("span", {class:"chip"}, [
+                                  label
+                              ]);
+                          }))
+                      ])
+                  ])
+              ])
+          ])
+      }
+      
+      function project_tile(item) {
+          if (item.provider === "github") {
+              return project_tile_github(item);
+          }
+          else {
+              return project_tile_gitlab(item);
+          }
+      }
+      
       function publication_tile(item) {
           return m("div", {class: "py-2 tile"}, [
               m("div", {class: "tile-content"}, [
@@ -226,7 +301,9 @@
                   m(Header, "projects", [
                       "A list of",
                       " (", Api.projects.list.length, ") ",
-                      "Awesome Erlang Open-source Projects.",
+                      "Awesome Erlang Open-source Projects. ",
+                      Api.projects.github.counter, " projects are hosted on github. ",
+                      Api.projects.gitlab.counter, " projects are hosted on gitlab."
                   ]),
                   m("main", [
                       Api.projects.list
